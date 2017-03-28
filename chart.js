@@ -7,8 +7,8 @@ $(document).ready(function () {
   }).done(function (result) {
     console.log(result)
 
-    var margin = { top: 20, right: 10, left: 40, bottom: 50 }
-    var width = 800 - margin.left - margin.right
+    var margin = { top: 20, right: 40, left: 40, bottom: 50 }
+    var width = 900 - margin.left - margin.right
     var height = 500 - margin.top - margin.bottom
     var svg = d3.select("body").append("svg")
       .attr("width", width + margin.left + margin.right)
@@ -38,45 +38,79 @@ $(document).ready(function () {
       .scale(yScale)
       .orient("left")
 
-  svg.append("g")
-    .attr("class", "x axis")
-    .attr("transform", "translate(0," + height + ")")
-    .call(xAxis)
-  .append("text")
-    .attr("class", "label")
-    .attr("x", width)
-    .attr("y", -6)
-    .style("text-anchor", "end")
-    .text("Minutes behind first place");
+    //x-axis
+    svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+    .append("text")
+      .attr("class", "label")
+      .attr("x", width)
+      .attr("y", -6)
+      .style("text-anchor", "end")
+      .text("Minutes behind first place");
 
 // y-axis
-svg.append("g")
-    .attr("class", "y axis")
-    .call(yAxis)
-    .append("text")
-    .attr("class", "label")
-    .attr("transform", "rotate(-90)")
-    .attr("y", 6)
-    .attr("dy", ".71em")
-    .style("text-anchor", "end")
-    .text("Rank");
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+      .append("text")
+      .attr("class", "label")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Place");
 
 
 
-      svg.selectAll(".dot")
-        .data(result)
-        .enter().append("circle")
-        //give circles radius
-        .attr("r", 6)
-        .attr("class", "dot")
-        .attr("cx", function (d) {
-          console.log((d.Seconds - firstPlace) / 60)
-          return  xScale((d.Seconds - firstPlace) / 60)
-        })
-        .attr("cy", function (d) {
-          console.log(d.Place)
-          return yScale(d.Place)
-        })
+    svg.selectAll(".dot")
+      .data(result)
+      .enter().append("circle")
+      //give circles radius
+      .attr("r", 6)
+      .attr("class", "dot")
+      .attr("cx", function (d) {
+        console.log((d.Seconds - firstPlace) / 60)
+        return  xScale((d.Seconds - firstPlace) / 60)
+      })
+      .attr("cy", function (d) {
+        console.log(d.Place)
+        return yScale(d.Place)
+      })
+      .style("fill", function (d) {
+        if (d.Doping.length) {
+          return "red"
+
+        } else {
+          return "steelblue"
+        }
+      })
+
+      var legend = svg.selectAll(".legend")
+      .data([["No doping allegations", "steelblue"], ["Doping Allegations", "red"]])
+    .enter().append("g")
+      .attr("class", "legend")
+      .attr("transform", function(d, i) {
+        var margin = parseInt(i * 30 + 150);
+        return "translate(0," + margin + ")";
+
+      });
+
+  // draw legend colored rectangles
+  legend.append("rect")
+      .attr("x", width - 18)
+      .attr("width", 18)
+      .attr("height", 18)
+      .style("fill", function(d) { return d[1];});
+
+  // draw legend text
+  legend.append("text")
+      .attr("x", width - 24)
+      .attr("y", 9)
+      .attr("dy", ".35em")
+      .style("text-anchor", "end")
+      .text(function(d) { return d[0];})
 
   })
 
