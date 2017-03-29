@@ -63,8 +63,17 @@ $(document).ready(function () {
       .text("Place");
 
 
+    var tip = d3.tip()
+.attr('class', 'd3-tip')
+.offset([-10, 0])
+.html(function(d) {
+  return "<span>" + d.Name + ": " + d.Nationality + "</span><br><span>" + "Year: " + d.Year + "</span>" + "<br><span>" + "Time: " + d.Time +
+  "</span>" + "<br><br><span>" + d.Doping + "</span>"
+})
 
-    svg.selectAll(".dot")
+
+
+    var circles = svg.selectAll(".dot")
       .data(result)
       .enter().append("circle")
       //give circles radius
@@ -78,6 +87,7 @@ $(document).ready(function () {
         console.log(d.Place)
         return yScale(d.Place)
       })
+      .call(tip)
       .style("fill", function (d) {
         if (d.Doping.length) {
           return "red"
@@ -86,16 +96,30 @@ $(document).ready(function () {
           return "steelblue"
         }
       })
+      .on("mouseover", tip.show)
+      .on("mouseout", tip.hide)
 
-      var legend = svg.selectAll(".legend")
+
+      circles.append("text")
+
+
+        .text(function (d) {
+          return d.Name
+        })
+
+        .attr("x", 20)
+        .attr("y", 20)
+        .attr("font-size", "16px")
+
+    var legend = svg.selectAll(".legend")
       .data([["No doping allegations", "steelblue"], ["Doping Allegations", "red"]])
-    .enter().append("g")
+      .enter().append("g")
       .attr("class", "legend")
       .attr("transform", function(d, i) {
-        var margin = parseInt(i * 30 + 150);
-        return "translate(0," + margin + ")";
+      var margin = parseInt(i * 30 + 150);
+      return "translate(0," + margin + ")";
 
-      });
+    });
 
   // draw legend colored rectangles
   legend.append("rect")
