@@ -128,7 +128,7 @@ $(document).ready(function () {
       .enter().append("g")
       .attr("class", "legend")
       .attr("transform", function(d, i) {
-      var margin = parseInt(i * 30 + 150);
+      var margin = parseInt(i * 30 + 300);
       return "translate(0," + margin + ")";
 
     });
@@ -145,7 +145,10 @@ $(document).ready(function () {
       .attr("x", width - 24)
       .attr("y", 9)
       .attr("dy", ".35em")
-      .style("text-anchor", "end")
+      .style({
+        "text-anchor": "end",
+        "font-size": "16px"
+      })
       .text(function(d) { return d[0];})
 
       //give chart a title
@@ -154,7 +157,10 @@ $(document).ready(function () {
         .attr("x", (width / 2))
         .attr("y", 0 - (margin.top / 2))
         .attr("text-anchor", "middle")
-        .style("font-size", "25px")
+        .style({
+            "font-size": "30px",
+            "font-weight": "bold"
+        })
         .text("35 Fastest times up Alpe d'Huez");
 
   })
