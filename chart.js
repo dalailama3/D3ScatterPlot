@@ -5,11 +5,10 @@ $(document).ready(function () {
     url: 'https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/cyclist-data.json',
     dataType: 'json'
   }).done(function (result) {
-    console.log(result)
 
-    var margin = { top: 20, right: 40, left: 40, bottom: 50 }
+    var margin = {  top: 80, right: 140, bottom: 60, left: 60 }
     var width = 900 - margin.left - margin.right
-    var height = 500 - margin.top - margin.bottom
+    var height = 700 - margin.top - margin.bottom
     var svg = d3.select("body").append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
@@ -23,11 +22,11 @@ $(document).ready(function () {
     var minutesGap = (lastPlace - firstPlace) / 60
 
     var xScale = d3.scale.linear()
-      .domain([minutesGap, 0])
+      .domain([minutesGap + .2, 0])
       .range([0, width])
 
     var yScale = d3.scale.linear()
-      .domain([35, 0])
+      .domain([36, 0])
       .range([height, 0])
 
     var xAxis = d3.svg.axis()
@@ -38,38 +37,16 @@ $(document).ready(function () {
       .scale(yScale)
       .orient("left")
 
-    //x-axis
-    svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis)
-    .append("text")
-      .attr("class", "label")
-      .attr("x", width)
-      .attr("y", -6)
-      .style("text-anchor", "end")
-      .text("Minutes behind first place");
-
-// y-axis
-  svg.append("g")
-      .attr("class", "y axis")
-      .call(yAxis)
-      .append("text")
-      .attr("class", "label")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", ".71em")
-      .style("text-anchor", "end")
-      .text("Place");
-
-
     var tip = d3.tip()
-.attr('class', 'd3-tip')
-.offset([-10, 0])
-.html(function(d) {
-  return "<span>" + d.Name + ": " + d.Nationality + "</span><br><span>" + "Year: " + d.Year + "</span>" + "<br><span>" + "Time: " + d.Time +
-  "</span>" + "<br><br><span>" + d.Doping + "</span>"
-})
+    .attr('class', 'd3-tip')
+    .offset([-10, 0])
+    .html(function(d) {
+      return "<span>" + d.Name + ": " + d.Nationality + "</span><br><span>" + "Year: " + d.Year + "</span>" + "<br><span>" + "Time: " + d.Time +
+      "</span>" + "<br><br><span>" + d.Doping + "</span>"
+    })
+
+
+
 
 
 
@@ -80,11 +57,10 @@ $(document).ready(function () {
       .attr("r", 6)
       .attr("class", "dot")
       .attr("cx", function (d) {
-        console.log((d.Seconds - firstPlace) / 60)
+        // console.log((d.Seconds - firstPlace) / 60)
         return  xScale((d.Seconds - firstPlace) / 60)
       })
       .attr("cy", function (d) {
-        console.log(d.Place)
         return yScale(d.Place)
       })
       .call(tip)
@@ -99,17 +75,53 @@ $(document).ready(function () {
       .on("mouseover", tip.show)
       .on("mouseout", tip.hide)
 
+      //add labels for the circles
 
-      circles.append("text")
+      svg.selectAll("text")
+
+      .data(result)
+      .enter()
+      .append("text")
+      .text(function(d) {
+
+        return d.Name;
+      })
+      .attr("x", function(d) {
+        return xScale((d.Seconds - firstPlace) / 60)
+      })
+      .attr("y", function(d) {
+        return yScale(d.Place);
+      })
+      .attr("transform", "translate(15,+4)");
+
+      //x-axis
+      svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis)
+      .append("text")
+        .attr("class", "label")
+        .attr("x", width)
+        .attr("y", -6)
+        .style("text-anchor", "end")
+        .text("Minutes behind first place");
+
+  // y-axis
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis)
+        .append("text")
+        .attr("class", "label")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", ".71em")
+        .style("text-anchor", "end")
+        .text("Place");
 
 
-        .text(function (d) {
-          return d.Name
-        })
 
-        .attr("x", 20)
-        .attr("y", 20)
-        .attr("font-size", "16px")
+
+
 
     var legend = svg.selectAll(".legend")
       .data([["No doping allegations", "steelblue"], ["Doping Allegations", "red"]])
@@ -135,6 +147,15 @@ $(document).ready(function () {
       .attr("dy", ".35em")
       .style("text-anchor", "end")
       .text(function(d) { return d[0];})
+
+      //give chart a title
+
+    svg.append("text")
+        .attr("x", (width / 2))
+        .attr("y", 0 - (margin.top / 2))
+        .attr("text-anchor", "middle")
+        .style("font-size", "25px")
+        .text("35 Fastest times up Alpe d'Huez");
 
   })
 
