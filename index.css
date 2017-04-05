@@ -5,6 +5,8 @@ body {
 
 h1 {
   margin-top: 50px;
+  color: white;
+  text-shadow: black 5px 5px 5px;
 }
 
 svg {
